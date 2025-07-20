@@ -6,110 +6,70 @@ Alice is an agent. Its "cognitive" state is composed of
 The following line initializes the agent's state with a belief that gives what 
 credentials it should use to interact with the simulated manufacturing line.
 
-TODO: replace N with your group number (to obtain e.g. "simu1", "simu2", etc).
+TODO: replace N with your group number to obtain, e.g. "simu1", or "simu2", or etc.
 */
 credentials("simuN", "simuN") .
 
-/*
-Some beliefs may be derived from others, given logical rules expressed in a
-Prolog-like syntax.
+/* *************************
+   BELIEFS
 
-The rules below are mostly there for convenience, to inspect representations
-of JSON objects in the language. It is boilerplate code, you do not need to
-look at it in details.
-*/
-thing(T)
-    :-
-    json(TD) & .list(TD) &
-    .member(kv(id, T), TD) .
+Belief : thing(T)
+Description : Thing T retrieved from the Thing Description.
 
-hasProperty(T, P)
-    :-
-    json(TD) & .list(TD) &
-    .member(kv(id, T), TD) &
-    .member(kv(properties, Ps), TD) &
-    .member(kv(P, _), Ps) .
+Belief : hasProperty(T, P)
+Description : Thing T has Property P.
 
-hasForm(T, PAE, F)
-    :-
-    json(TD) & .list(TD) &
-    .member(kv(id, T), TD) &
-    (
-        .member(kv(properties, PAEs),  TD) |
-        .member(kv(actions, PAEs),  TD) |
-        .member(kv(events, PAEs),  TD)
-    ) &
-    .member(kv(PAE, Def), PAEs) &
-    .member(kv(forms, Fs), Def) &
-    .member(F, Fs) .
+Belief : hasForm(T, PAE, F)
+Description : Thing T has Form F that defines a Property, Action or Event PAE.
 
-hasTargetURI(F, URI) :- .member(kv(href, URI), F) .
+Belief : hasTargetURI(F, URI)
+Description : Form F has the Hyperlink Reference URI.
+**************************** */
+{ include("beliefs.asl") }
 
-/*
-Below are Alice's plans. Whenever Alice has a goal, she will execute one of the
-plans she knows shall achieve this goal. Plans are the core of the agent's
-program, they dictate the overall behavior of the agent.
+/* *************************
+   GOALS
 
-A plan has the following structure:
+Goal : getTD(TD)
+Description : Retrieve a Thing Description document in the TD URI and display
+the Thing tag.
 
-triggering_event : guard_condition <- action ; action ; ... action .
+Goal : listProperties(T)
+Description : Display all the properties in the Thing T.
 
-- tringgering events are the addition/deletion of beliefs and goals to the
-agent's state, e.g. the addition of goal !getTD(<URI of a TD document>);
-- the guard condition is a logical formula over beliefs;
-- an action is a statement that has side effects in the agent's environment
-(here, the environment is the Web).
+Goal : readProperty(T, P)
+Description : Read and display the value of the Property P in the Thing T.
 
-Given the following plans, Alice can retrieve a TD document, list the
-properties it contains, read and write those properties, and invoke actions.
-That is, it can do what most WoT consumers should be able to do.
-*/
-+!getTD(TD)
-    <-
-    !prepareForm(F) ;
-    get(TD, F) ;
-    ?thing(T) ;
-    .print("Found Thing with URI ", T) .
+Goal : writeProperty(T, P, Val)
+Description : Write the value Val to the Property P in the Thing T.
 
-+!listProperties(T) <- for (hasProperty(T, P)) { .print(P) } .
+Goal : invokeAction(T, A, In)
+Description : Invoke Action A in the Thing T with the Input value In in JSON format.
 
-+!readProperty(T, P) : hasForm(T, P, F) & hasTargetURI(F, URI)
-    <-
-    !prepareForm(Fp) ;
-    get(URI, Fp) ;
-    ?(json(Val)[source(URI)]) ;
-    .print(P, " = ", Val) .
+Goal : prepareForm(F)
+Description : Prepare an authentication Form F used to act on the Thing.
+**************************** */
+{ include("goals.asl") }
 
-+!writeProperty(T, P, Val) : hasForm(T, P, F) & hasTargetURI(F, URI)
-    <-
-    !prepareForm(Fp) ;
-    put(URI, [json(Val)], Fp) .
 
-+!invokeAction(T, A, In) : hasForm(T, A, F) & hasTargetURI(F, URI)
-    <-
-    !prepareForm(Fp) ;
-    post(URI, [json(In)], Fp) .
+/* *************************
+   EXERCISES
 
-+!prepareForm(F) : credentials(User, Pw)
-    <-
-    h.basic_auth_credentials(User, Pw, H) ;
-    F = [kv("urn:hypermedea:http:authorization", H)] .
-
-/*
-Exercises:
-
-1. Edit the plan below to read the TD of the VL10 workshop and print its
+1. Edit the '!start' plan below to read the TD of the VL10 workshop and print its
 properties to the console.
+
+Look at https://gitlab.emse.fr/ai4industry/hackathon/-/wikis/conveying-workshop
+for more details about the VL10 workshop.
 
 2. Re-write the plan so that Alice sets the conveyor speed of the VL10 workshop
 to 0.5 (m/s) and then picks an item at position (0,0).
 
 That will be all for now. More details about the Jason language will be given
 in the MAS lecture.
-*/
+**************************** */
 +!start
     <-
-    .print("I'm not doing anything. Add some actions to this plan!") .
+    .print("I'M DOING NOTHING. ADD ACTIONS TO THIS PLAN TO ANSWER TO THE EXERCISES!") .
 
 !start . // entry point of the agent's reasoning cycle
 
