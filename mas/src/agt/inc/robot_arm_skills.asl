@@ -36,6 +36,18 @@ has_origin_coordinates(Name,ValueX, ValueY, ValueZ) :-
       & builder(Temp, Base, "ontology#coordZ",ValueZ)
   .
 
+// plan for testing the status of the Thing by accessing the property affordances
++!testStatus(Name) :
+    true
+    <-
+    ?inMovement(Name,ValueI);
+    .println("TEST In Movement ",ValueI);
+    ?grasping(Name,ValueG);
+    .println("TEST Grasping ",ValueG);
+  .
+
+/***************************************/
+
 // Plan for invoking the action affordance reset
 +!reset(Name) :
     thing(Name,Thing)
@@ -88,4 +100,56 @@ has_origin_coordinates(Name,ValueX, ValueY, ValueZ) :-
     <-
     !invokeAction(ActionName,[kv(x,X),kv(y,Y),kv(z,Z)])[artifact_name(Name)];
     .println("invoked operation ",ActionName," with parameter X ",X," Y ",Y," Z ",Z," on ",Thing);
+  .
+
+/***************************************/
+
++?inMovement(Name,Value) :
+    thing(Name,Thing)
+    & in_movement_property(Thing,PName)
+    <-
+    !readProperty(PName,Value)[artifact_name(Name)];
+    .println("acted on ",Name," to request ",Thing," for current value of ",PName," : ", Value);
+  .
+
++?grasping(Name,Value) :
+    thing(Name,Thing)
+    & grasping_property(Thing,PName)
+    <-
+    !readProperty(PName,Value)[artifact_name(Name)];
+    .println("acted on ",Name," to request ",Thing," for current value of ",PName," : ", Value);
+  .
+
+/***************************************/
+
++!observeInMovement(Name) :
+    timer(Timer)
+    & thing(Name,Thing)
+    & in_movement_property(Thing,PName)
+    <-
+    !observeProperty(Name,PName,Timer);
+    .println("observing ",PName," on ",Thing);
+  .
+
++!observeGrasping(Name) :
+    timer(Timer)
+    & thing(Name,Thing)
+    & grasping_property(Thing,PName)
+    <-
+    !observeProperty(Name,PName,Timer);
+    .println("observing ",PName," on ",Thing);
+  .
+
+/***************************************/
+
++propertyValue("inMovement", X) :
+    true
+    <-
+    .println("inMovement is now ", X);
+  .
+
++propertyValue("grasping", X) :
+    true
+    <-
+    .println("grasping is now ", X);
   .

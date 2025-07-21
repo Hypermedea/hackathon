@@ -7,7 +7,7 @@ curl -i --user "simu$1:simu$1" --location --request POST "https://ci.mines-steti
 echo "Calling fillingWorkshop.pressEmergencyStop...\n" echo;
 curl -i --user "simu$1:simu$1" --location --request POST "https://ci.mines-stetienne.fr/simu/fillingWorkshop/actions/pressEmergencyStop";
 echo "Calling robotArm.pressEmergencyStop..." echo;
-#curl --user "simu$1:simu$1" --location --request POST "https://ci.mines-stetienne.fr/simu/robotArm/actions/pressEmergencyStop";
+curl --user "simu$1:simu$1" --location --request POST "https://ci.mines-stetienne.fr/simu/robotArm/actions/pressEmergencyStop";
 echo "Calling packagingWorkshop.pressEmergencyStop..." echo;
 curl -i --user "simu$1:simu$1" --location --request POST "https://ci.mines-stetienne.fr/simu/packagingWorkshop/actions/pressEmergencyStop";
 echo "Calling cupProvider.order(25)..." echo;

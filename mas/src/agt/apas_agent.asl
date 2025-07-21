@@ -72,15 +72,6 @@ thing(boschApas,Thing) :-
     !!run(Name);
   .
 
-+!testStatus(Name) :
-    true
-    <-
-    ?inMovement(Name,ValueI);
-    .println("TEST In Movement ",ValueI);
-    ?grasping(Name,ValueG);
-    .println("TEST Grasping ",ValueG);
-  .
-
 +!potItems(Name) :
     location_conveyor(Lc)
     & location_packaging(Lp)
@@ -95,36 +86,6 @@ thing(boschApas,Thing) :-
     true
     <-
     .println("carrying a pot from ",From," to ",To);
-  .
-
-+!observeInMovement(Name) :
-    timer(Timer)
-    & thing(Name,Thing)
-    & in_movement_property(Thing,PName)
-    <-
-    !observeProperty(Name,PName,Timer);
-    .println("observing ",PName," on ",Thing);
-  .
-
-+!observeGrasping(Name) :
-    timer(Timer)
-    & thing(Name,Thing)
-    & grasping_property(Thing,PName)
-    <-
-    !observeProperty(Name,PName,Timer);
-    .println("observing ",PName," on ",Thing);
-  .
-
-+propertyValue("inMovement", X) :
-    true
-    <-
-    .println("inMovement is now ", X);
-  .
-
-+propertyValue("grasping", X) :
-    true
-    <-
-    .println("grasping is now ", X);
   .
 
 { include("inc/robot_arm_skills.asl") }
