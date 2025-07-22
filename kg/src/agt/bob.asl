@@ -1,5 +1,9 @@
 /*
-Agent Bob crawls (a subset of) the Web by dereferencing the given URI and
+Bob is an agent. Its "cognitive" state is composed of
+- beliefs (atomic statements, as in Prolog) and
+- goals (atomic statements prefixed with '!' or '?').
+
+Bob crawls (a subset of) the Web by dereferencing the given URI and
 by following only certain links. Here, it only follows links between systems
 (as Web resources) and their subsystems. In other words, it is only interested
 in resources likely to contain a description of the manufacturing line.
@@ -9,7 +13,13 @@ properties, and invoking actions. There is a significant difference between
 the two, though: Bob does not consider the actual names of Things or
 property/action affordances. Instead, it only considers classes, so as to 
 behave identically if two Things have the same interface.
+
+The following line initializes the agent's state with a belief that gives what 
+credentials it should use to interact with the simulated manufacturing line.
+
+TODO: replace N with your group number to obtain, e.g. "simu1", or "simu2", or etc.
 */
+credentials("simuN", "simuN") .
 
 
 
